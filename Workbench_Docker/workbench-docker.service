@@ -1,0 +1,22 @@
+[Unit]
+Description=RStudio Workbench Service
+After=docker.service
+Requires=docker.service
+
+[Service]
+TimeoutStartSec=0
+Restart=always
+ExecStartPre=-/usr/bin/docker exec workbench-docker stop
+ExecStart=/usr/bin/docker run --rm --privileged \
+    --mount type=bind,source=/etc/passwd,target=/etc/passwd \
+    --mount type=bind,source=/etc/shadow,target=/etc/shadow \
+    --mount type=bind,source=/etc/group,target=/etc/group \
+    -v /data/RProjects:/home \
+    -e RSW_TESTUSER="" \
+    -p 8787:8787 \
+    -p 5559:5559 \
+    rstudio/workbench-docker:latest
+
+[Install]
+WantedBy=default.target
+

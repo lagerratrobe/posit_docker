@@ -1,0 +1,22 @@
+[Unit]
+Description=RStudio Connect Service
+After=docker.service
+Requires=docker.service
+
+[Service]
+TimeoutStartSec=0
+Restart=always
+ExecStartPre=-/usr/bin/docker exec connect-docker stop
+ExecStart=/usr/bin/docker run --rm \
+    --privileged \
+    --mount type=bind,source=/etc/passwd,target=/etc/passwd \
+    --mount type=bind,source=/etc/shadow,target=/etc/shadow \
+    --mount type=bind,source=/etc/group,target=/etc/group \
+    -v /data/connect_data:/data \
+    -v /tmp:/tmp \
+    -p 3939:3939 \
+    rstudio/connect-docker:latest
+
+[Install]
+WantedBy=default.target
+

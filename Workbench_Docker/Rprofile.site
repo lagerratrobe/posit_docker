@@ -1,0 +1,8 @@
+# /opt/R/4.1.0/lib/R/etc/Rprofile.site
+
+local({
+  r <- getOption("repos")
+  r["CRAN"] <- "http://posit2:4242/cran/__linux__/bionic/latest"
+  options(repos = r)
+})
+

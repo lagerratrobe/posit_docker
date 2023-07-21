@@ -1,0 +1,43 @@
+
+[Server]
+SenderEmail = randre@gmail.com
+Address = http://0.0.0.0:3939
+DataDir = /data
+
+[Licensing]
+LicenseType = local
+
+[Database]
+Provider = sqlite
+
+[HTTP]
+Listen = :3939
+NoWarning = TRUE
+
+[Authentication]
+Provider = password
+
+[RPackageRepository "CRAN"]
+URL = http://posit2:4242/cran/__linux__/bionic/latest
+
+[Python]
+Enabled = true
+Executable = /opt/python/3.8.10/bin/python
+Executable = /opt/python/3.9.5/bin/python
+
+[Quarto]
+Enabled = true
+Executable = /opt/quarto/1.3.340/bin/quarto
+
+[Applications]
+RunAsCurrentUser = true
+SharedRunAsUnixGroup = r-users
+MostPermissiveAccessType = all
+AdminMostPermissiveAccessType = all
+
+[Logging]
+ServiceLog = STDOUT
+ServiceLogFormat = TEXT    ; TEXT or JSON
+ServiceLogLevel = INFO     ; INFO, WARNING or ERROR
+AccessLog = STDOUT
+AccessLogFormat = COMMON   ; COMMON, COMBINED, or JSON

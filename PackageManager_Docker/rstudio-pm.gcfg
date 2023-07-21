@@ -1,0 +1,32 @@
+; RStudio Package Manager configuration file
+
+[Server]
+Address = http://posit2:4242
+RVersion = /opt/R/4.2.0/
+DataDir = /data
+LauncherDir = /data/launcher_internal
+
+[HTTP]
+Listen = :4242
+
+[CRAN]
+; Customize the default schedule for CRAN sync.
+;SyncSchedule = "0 0 * * *"
+
+[Bioconductor]
+; Customize the default schedule for Bioconductor syncs.
+;SyncSchedule = "0 2 * * *"
+
+[PyPI]
+; Customize the default schedule for PyPI syncs.
+;SyncSchedule = "0 1 * * *"
+
+; Configure Git if you are intending to build and share packages stored in Git repositories.
+[Git]
+; The amount of time to wait between polling git repos to look for package changes.
+;PollInterval = 5m
+;
+; The maximum number of times to attempt building a git package when the build fails.
+;BuildRetries = 3
+AllowUnsandboxedGitBuilds = true
+
