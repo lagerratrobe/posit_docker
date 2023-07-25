@@ -5,10 +5,10 @@ FROM rstudio/rstudio-package-manager:bionic-2023.04.0
 COPY rstudio-pm.gcfg /etc/rstudio-pm/rstudio-pm.gcfg
 
 # Copy our license key into the container (note that with a key, follow docker hub instructions)
-COPY RSPM_2023-06-14.lic /etc/rstudio-pm/license.lic
+COPY package_manager.lic /etc/rstudio-pm/package_manager.lic
 
 # Activate the license 
-RUN /opt/rstudio-pm/bin/license-manager activate-file /etc/rstudio-pm/license.lic
+RUN /opt/rstudio-pm/bin/license-manager activate-file /etc/rstudio-pm/package_manager.lic
 
 # Update the timezone
 USER root

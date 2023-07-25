@@ -34,10 +34,10 @@ RUN wget https://cdn.rstudio.com/r/ubuntu-1804/pkgs/r-4.3.0_1_amd64.deb && gdebi
 COPY rstudio-connect.gcfg /etc/rstudio-connect/rstudio-connect.gcfg
 
 # Copy our license file into the container
-COPY Connect_License.lic /etc/rstudio-server/Connect_License.lic
+COPY connect.lic /etc/rstudio-server/connect.lic
 
 # Activate the license 
-RUN /opt/rstudio-connect/bin/license-manager activate-file /etc/rstudio-server/Connect_License.lic
+RUN /opt/rstudio-connect/bin/license-manager activate-file /etc/rstudio-server/connect.lic
 
 # Update the timezone
 ENV TZ=America/Los_Angeles
