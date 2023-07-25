@@ -24,7 +24,7 @@ The files and instructions in this directory will create a containerized instanc
 ## Prerequisites
 * Host machine with the docker CLI setup
 * Github access
-* A valid Connect license file
+* A valid Workbench license file
 
 ## Setup Steps
 
@@ -68,7 +68,7 @@ DOCKER_BUILDKIT=0 docker build -t rstudio/workbench-docker .
 ### 5. Set up a service configuration for Workbench
 To have Workbench start up automatically and shut down cleanly when the machine is turned off, you'll want to setup a service definition.  There is an included file in this directory that can be used as a starting point, `workbench-docker.service`.  
 
-* Edit the file to reflect where on the host machine you want Connect to persist data.  In the block below:
+* Edit the file to reflect where on the host machine you want Workbench to persist data.  In the block below...
 ```
 [Unit]
 Description=RStudio Workbench Service

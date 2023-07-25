@@ -2,13 +2,13 @@ FROM rstudio/rstudio-workbench:ubuntu1804
 
 # Setup system libs
 RUN apt update
-RUN apt install -y libgdal-dev libgeos-dev libproj-dev libudunits2-dev unixodbc unixodbc-dev libfribidi0 wget gdebi vim libffi-dev libgdbm-dev libsqlite3-dev libssl-dev zlib1g-dev
+RUN apt install -y libgdal-dev libgeos-dev libproj-dev libudunits2-dev unixodbc unixodbc-dev libfribidi0 wget gdebi vim libffi-dev libgdbm-dev libsqlite3-dev libssl-dev zlib1g-dev libzmq3-dev
 
 # Copy the offline lic file into the image
-COPY license.key /etc/rstudio/license.key
+COPY workbench.lic /etc/rstudio/workbench.lic
 
 # Activate the license
-RUN /usr/lib/rstudio-server/bin/license-manager activate-file /etc/rstudio/license.key
+RUN /usr/lib/rstudio-server/bin/license-manager activate-file /etc/rstudio/workbench.lic
 
 # Update the timezone
 ENV TZ=America/Los_Angeles
@@ -36,14 +36,20 @@ RUN printf "export RETICULATE_PYTHON=/opt/python/3.8.15/bin/python \n" >> /etc/r
 RUN cd /opt && wget https://cdn.rstudio.com/r/ubuntu-1804/pkgs/r-4.3.0_1_amd64.deb && gdebi -n r-4.3.0_1_amd64.deb
 
 # Setup r-versions
-RUN printf "/opt/R/4.3.0 \n" >> /etc/rstudio/r-versions
-RUN printf "/opt/R/4.2.3 \n" >> /etc/rstudio/r-versions
-RUN printf "/opt/R/4.1.3 \n" >> /etc/rstudio/r-versions
+RUN printf "Path: /opt/R/4.3.0\n" >> /etc/rstudio/r-versions
+RUN printf "Label: R 4.3.0\n" >> /etc/rstudio/r-versions
+RUN printf "\n" >> /etc/rstudio/r-versions
+RUN printf "Path: /opt/R/4.2.3\n" >> /etc/rstudio/r-versions
+RUN printf "Label: R 4.2.3\n" >> /etc/rstudio/r-versions
+RUN printf "\n" >> /etc/rstudio/r-versions
+RUN printf "Path: /opt/R/4.1.3\n" >> /etc/rstudio/r-versions
+RUN printf "Label: R 4.1.3\n" >> /etc/rstudio/r-versions
+RUN printf "\n" >> /etc/rstudio/r-versions
 
-# Install the R reticulate and odbc packges in at least one version of R (pointed at local pkg manager)
-RUN /opt/R/4.1.3/bin/Rscript -e 'install.packages(c("reticulate","odbc"), repos = "http://posit2:4242/cran/__linux__/bionic/latest")'
-RUN /opt/R/4.2.3/bin/Rscript -e 'install.packages(c("reticulate","odbc"), repos = "http://posit2:4242/cran/__linux__/bionic/latest")'
-RUN /opt/R/4.3.0/bin/Rscript -e 'install.packages(c("reticulate","odbc"), repos = "http://posit2:4242/cran/__linux__/bionic/latest")'
+# Install the R reticulate, odbc and IRkernel packages
+RUN /opt/R/4.1.3/bin/Rscript -e 'install.packages(c("reticulate","odbc", "IRkernel"), repos = "http://posit2:4242/cran/__linux__/bionic/latest")'
+RUN /opt/R/4.2.3/bin/Rscript -e 'install.packages(c("reticulate","odbc", "IRkernel"), repos = "http://posit2:4242/cran/__linux__/bionic/latest")'
+RUN /opt/R/4.3.0/bin/Rscript -e 'install.packages(c("reticulate","odbc", "IRkernel"), repos = "http://posit2:4242/cran/__linux__/bionic/latest")'
 
 # Point at Private Package Manager
 COPY repos.conf /etc/rstudio/repos.conf
@@ -63,6 +69,9 @@ RUN rm -rf /opt/python/jupyter
 
 # Install Jupyter lab, notebooks etc
 RUN /opt/python/3.8.15/bin/pip install jupyter jupyterlab rsp_jupyter rsconnect_jupyter workbench_jupyterlab
+
+# Set jupyter on the PATH
+RUN ln -s /opt/python/3.8.15/bin/jupyter /usr/local/bin/jupyter
 
 # Install the Jupyter extensions
 RUN /opt/python/3.8.15/bin/jupyter-nbextension install --sys-prefix --py rsp_jupyter
@@ -97,6 +106,12 @@ RUN cd /tmp && curl https://packages.microsoft.com/keys/microsoft.asc | apt-key 
 # Get rid of buildkitsandbox error (should only be in bionic)
 RUN rm -rf /var/lib/rstudio-launcher/Local/jobs/buildkitsandbox 
 
-# 18. Set additional explicit python kernels in Jupyter
+# 18. Set additional explicit kernels in Jupyter
 RUN /opt/python/3.9.14/bin/pip install ipykernel
 RUN /opt/python/3.9.14/bin/python -m ipykernel install --name py3.9.14 --display-name "Python 3.9.14"
+
+# R
+RUN /opt/R/4.1.3/bin/Rscript -e 'IRkernel::installspec(user = FALSE, name="R4.1.3", displayname="R 4.1.3")'
+RUN /opt/R/4.2.3/bin/Rscript -e 'IRkernel::installspec(user = FALSE, name="R4.2.3", displayname="R 4.2.3")'
+RUN /opt/R/4.3.0/bin/Rscript -e 'IRkernel::installspec(user = FALSE, name="R4.3.0", displayname="R 4.3.0")'
+
