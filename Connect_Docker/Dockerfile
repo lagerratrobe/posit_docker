@@ -3,7 +3,7 @@ FROM rstudio/rstudio-connect:bionic-2023.05.0
 
 # Make it possible to install system libs
 RUN apt-get update
-RUN apt-get install -y gdebi
+RUN apt-get install -y gdebi unixodbc unixodbc-dev
 
 # Setup system libs for sf and raster (GDAL, etc)
 RUN apt-get update
@@ -29,6 +29,9 @@ RUN wget https://cdn.rstudio.com/r/ubuntu-1804/pkgs/r-4.1.3_1_amd64.deb && gdebi
 
 # Install current version of R
 RUN wget https://cdn.rstudio.com/r/ubuntu-1804/pkgs/r-4.3.0_1_amd64.deb && gdebi -n r-4.3.0_1_amd64.deb
+
+# Pro-Driver setup
+RUN cd /tmp && curl -O https://cdn.rstudio.com/drivers/7C152C12/installer/rstudio-drivers_2023.05.0_amd64.deb && sudo gdebi -n rstudio-drivers_2023.05.0_amd64.deb && cp /opt/rstudio-drivers/odbcinst.ini.sample /etc/odbcinst.ini
 
 # Copy our configuration over the default install configuration
 COPY rstudio-connect.gcfg /etc/rstudio-connect/rstudio-connect.gcfg
