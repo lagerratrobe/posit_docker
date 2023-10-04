@@ -97,7 +97,8 @@ rstudio-pm$ rspm create source \
 rstudio-pm$ rspm create git-builder \
 --url=https://github.com/lagerratrobe/R_Pkg_Hello_World.git \
 --source=git-hello-world \
---build-trigger=commits
+--build-trigger=commits \
+--branch=master
 
 rstudio-pm$ rspm create repo \
 --name=git-hello-world \
