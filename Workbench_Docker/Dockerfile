@@ -52,12 +52,12 @@ RUN /opt/R/4.2.3/bin/Rscript -e 'install.packages(c("reticulate","odbc", "IRkern
 RUN /opt/R/4.3.0/bin/Rscript -e 'install.packages(c("reticulate","odbc", "IRkernel"), repos = "http://posit2:4242/cran/__linux__/bionic/latest")'
 
 # Point at Private Package Manager
-COPY repos.conf /etc/rstudio/repos.conf
+#COPY repos.conf /etc/rstudio/repos.conf
 
 # Add an Rprofile.site to set repo at CLI
-COPY Rprofile.site /opt/R/4.1.3/lib/R/etc/Rprofile.site
-COPY Rprofile.site /opt/R/4.2.3/lib/R/etc/Rprofile.site
-COPY Rprofile.site /opt/R/4.3.0/lib/R/etc/Rprofile.site
+#COPY Rprofile.site /opt/R/4.1.3/lib/R/etc/Rprofile.site
+#COPY Rprofile.site /opt/R/4.2.3/lib/R/etc/Rprofile.site
+#COPY Rprofile.site /opt/R/4.3.0/lib/R/etc/Rprofile.site
 
 # Overwrite the default rserver.conf
 RUN rm -rf /etc/rstudio/rserver.conf
@@ -96,6 +96,9 @@ RUN printf "server-project-sharing-root-dir=/home/SharedProjects \n" >> /etc/rst
 # Set default project and work dirs
 RUN printf "session-default-working-dir=/data/RProjects \n" >> /etc/rstudio/rsession.conf
 RUN printf "session-default-new-project-dir=/data/RProjects \n" >> /etc/rstudio/rsession.conf
+
+RUN printf "r-cran-repos-url=http://posit2:4242/__api__/repos \n" >> /etc/rstudio/rsession.conf
+RUN printf "allow-r-cran-repos-edit=1 \n" >> /etc/rstudio/rsession.conf
 
 # Add admin-super user
 RUN printf "admin-superuser-group=r-users \n" >> /etc/rstudio/rserver.conf

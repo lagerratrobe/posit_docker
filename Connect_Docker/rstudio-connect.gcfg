@@ -1,14 +1,18 @@
 
 [Server]
 SenderEmail = randre@gmail.com
-Address = http://0.0.0.0:3939
+Address = http://posit2:3939
 DataDir = /data
 
 [Licensing]
 LicenseType = local
 
 [Database]
-Provider = sqlite
+Provider = postgres
+
+[Postgres]
+URL = "postgres://rstudio_connect@posit2/rstudio_connect"
+Password = "rstudio_connect"
 
 [HTTP]
 Listen = :3939
@@ -24,6 +28,7 @@ URL = http://posit2:4242/cran/__linux__/bionic/latest
 Enabled = true
 Executable = /opt/python/3.8.10/bin/python
 Executable = /opt/python/3.9.5/bin/python
+Executable = /opt/python/3.12.0/bin/python3
 
 [Quarto]
 Enabled = true

@@ -1,5 +1,6 @@
 
-FROM rstudio/rstudio-connect:bionic-2023.05.0
+#FROM rstudio/rstudio-connect:bionic-2023.05.0
+FROM rstudio/rstudio-connect:bionic-2023.06.0
 
 # Make it possible to install system libs
 RUN apt-get update
@@ -29,6 +30,14 @@ RUN wget https://cdn.rstudio.com/r/ubuntu-1804/pkgs/r-4.1.3_1_amd64.deb && gdebi
 
 # Install current version of R
 RUN wget https://cdn.rstudio.com/r/ubuntu-1804/pkgs/r-4.3.0_1_amd64.deb && gdebi -n r-4.3.0_1_amd64.deb
+
+# Install Python 3.12.0 and set pip to 23.3.1
+RUN wget https://cdn.rstudio.com/python/ubuntu-1804/pkgs/python-3.12.0_1_amd64.deb && gdebi -n python-3.12.0_1_amd64.deb
+RUN /opt/python/3.12.0/bin/pip install pip==23.3.1 setuptools wheel
+
+# Install parquet file support
+RUN /opt/python/3.8.10/bin/pip install pyarrow
+RUN /opt/python/3.8.10/bin/pip install fastparquet
 
 # Pro-Driver setup
 RUN cd /tmp && curl -O https://cdn.rstudio.com/drivers/7C152C12/installer/rstudio-drivers_2023.05.0_amd64.deb && sudo gdebi -n rstudio-drivers_2023.05.0_amd64.deb && cp /opt/rstudio-drivers/odbcinst.ini.sample /etc/odbcinst.ini
