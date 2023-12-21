@@ -1,5 +1,12 @@
 
-FROM rstudio/rstudio-package-manager:bionic-2023.04.0
+FROM rstudio/rstudio-package-manager:jammy-2023.08.4
+
+USER root
+RUN apt update && apt install locales
+# Set the locale
+ENV LC_ALL=C
+RUN locale-gen en_US.UTF-8
+USER rstudio-pm
 
 # Copy our configuration over the default install configuration
 COPY rstudio-pm.gcfg /etc/rstudio-pm/rstudio-pm.gcfg

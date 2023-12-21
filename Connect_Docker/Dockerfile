@@ -1,6 +1,5 @@
 
-#FROM rstudio/rstudio-connect:bionic-2023.05.0
-FROM rstudio/rstudio-connect:bionic-2023.06.0
+FROM rstudio/rstudio-connect:jammy-2023.12.0
 
 # Make it possible to install system libs
 RUN apt-get update
@@ -12,7 +11,7 @@ RUN apt-get install -y libgdal-dev libgeos-dev libproj-dev libudunits2-dev
 
 # Fix the TinyTeX install
 RUN chmod -R 777 /opt/TinyTeX
-RUN tlmgr option repository https://texlive.info/tlnet-archive/2023/04/08/tlnet/
+#RUN tlmgr option repository https://texlive.info/tlnet-archive/2023/11/19/tlnet/
 RUN tlmgr install koma-script
 RUN tlmgr install caption
 RUN tlmgr install tcolorbox
@@ -23,21 +22,25 @@ RUN tlmgr install bookmark
 RUN chmod 666 /opt/TinyTeX/tlpkg/texlive.tlpdb
 
 # Install the R Reticulate packge in at least one version of R
-RUN /opt/R/4.2.0/bin/Rscript -e 'install.packages("reticulate", repos = "http://posit2:4242/cran/__linux__/bionic/latest")'
+RUN /opt/R/4.2.3/bin/Rscript -e 'install.packages("reticulate", repos = "http://posit2:4242/cran/__linux__/jammy/latest")'
 
 # Install old version of R
-RUN wget https://cdn.rstudio.com/r/ubuntu-1804/pkgs/r-4.1.3_1_amd64.deb && gdebi -n r-4.1.3_1_amd64.deb
+#RUN wget https://cdn.rstudio.com/r/ubuntu-1804/pkgs/r-4.1.3_1_amd64.deb && gdebi -n r-4.1.3_1_amd64.deb
 
 # Install current version of R
-RUN wget https://cdn.rstudio.com/r/ubuntu-1804/pkgs/r-4.3.0_1_amd64.deb && gdebi -n r-4.3.0_1_amd64.deb
+RUN wget https://cdn.rstudio.com/r/ubuntu-2204/pkgs/r-4.3.0_1_amd64.deb && gdebi -n r-4.3.0_1_amd64.deb
 
 # Install Python 3.12.0 and set pip to 23.3.1
-RUN wget https://cdn.rstudio.com/python/ubuntu-1804/pkgs/python-3.12.0_1_amd64.deb && gdebi -n python-3.12.0_1_amd64.deb
+RUN wget https://cdn.rstudio.com/python/ubuntu-2204/pkgs/python-3.12.0_1_amd64.deb && gdebi -n python-3.12.0_1_amd64.deb
 RUN /opt/python/3.12.0/bin/pip install pip==23.3.1 setuptools wheel
 
+# Update pip in both of the pre-installed Python versions
+RUN /opt/python/3.8.17/bin/python3.8 -m pip install --upgrade pip
+RUN /opt/python/3.9.17/bin/python3.9 -m pip install --upgrade pip
+
 # Install parquet file support
-RUN /opt/python/3.8.10/bin/pip install pyarrow
-RUN /opt/python/3.8.10/bin/pip install fastparquet
+RUN /opt/python/3.8.17/bin/pip install pyarrow
+RUN /opt/python/3.8.17/bin/pip install fastparquet
 
 # Pro-Driver setup
 RUN cd /tmp && curl -O https://cdn.rstudio.com/drivers/7C152C12/installer/rstudio-drivers_2023.05.0_amd64.deb && sudo gdebi -n rstudio-drivers_2023.05.0_amd64.deb && cp /opt/rstudio-drivers/odbcinst.ini.sample /etc/odbcinst.ini

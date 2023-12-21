@@ -1,4 +1,4 @@
-FROM rstudio/rstudio-workbench:ubuntu1804
+FROM rstudio/rstudio-workbench:jammy-2023.12.0
 
 # Setup system libs
 RUN apt update
@@ -16,7 +16,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # Update the TinyTeX install (note that this pegs the texlive version)
 RUN chmod -R 777 /opt/TinyTeX
-RUN tlmgr option repository https://texlive.info/tlnet-archive/2023/04/08/tlnet/
+#RUN tlmgr option repository https://texlive.info/tlnet-archive/2023/04/08/tlnet/
 RUN tlmgr install koma-script
 RUN tlmgr install caption
 RUN tlmgr install tcolorbox
@@ -27,13 +27,13 @@ RUN tlmgr install bookmark
 RUN chmod 666 /opt/TinyTeX/tlpkg/texlive.tlpdb
 
 # Add an installed Python to System Path
-RUN printf "PATH=/opt/python/3.8.15/bin:$PATH \n" >> /etc/profile.d/python.sh
+RUN printf "PATH=/opt/python/3.8.17/bin:$PATH \n" >> /etc/profile.d/python.sh
 
 # Set RETICULATE_PYTHON
-RUN printf "export RETICULATE_PYTHON=/opt/python/3.8.15/bin/python \n" >> /etc/rstudio/rsession-profile
+RUN printf "export RETICULATE_PYTHON=/opt/python/3.8.17/bin/python \n" >> /etc/rstudio/rsession-profile
 
 # Install current version of R
-RUN cd /opt && wget https://cdn.rstudio.com/r/ubuntu-1804/pkgs/r-4.3.0_1_amd64.deb && gdebi -n r-4.3.0_1_amd64.deb
+RUN cd /opt && wget https://cdn.rstudio.com/r/ubuntu-2204/pkgs/r-4.3.0_1_amd64.deb && gdebi -n r-4.3.0_1_amd64.deb
 
 # Setup r-versions
 RUN printf "Path: /opt/R/4.3.0\n" >> /etc/rstudio/r-versions
@@ -47,9 +47,9 @@ RUN printf "Label: R 4.1.3\n" >> /etc/rstudio/r-versions
 RUN printf "\n" >> /etc/rstudio/r-versions
 
 # Install the R reticulate, odbc and IRkernel packages
-RUN /opt/R/4.1.3/bin/Rscript -e 'install.packages(c("reticulate","odbc", "IRkernel"), repos = "http://posit2:4242/cran/__linux__/bionic/latest")'
-RUN /opt/R/4.2.3/bin/Rscript -e 'install.packages(c("reticulate","odbc", "IRkernel"), repos = "http://posit2:4242/cran/__linux__/bionic/latest")'
-RUN /opt/R/4.3.0/bin/Rscript -e 'install.packages(c("reticulate","odbc", "IRkernel"), repos = "http://posit2:4242/cran/__linux__/bionic/latest")'
+RUN /opt/R/4.1.3/bin/Rscript -e 'install.packages(c("reticulate","odbc", "IRkernel"), repos = "http://posit2:4242/cran/__linux__/jammy/latest")'
+RUN /opt/R/4.2.3/bin/Rscript -e 'install.packages(c("reticulate","odbc", "IRkernel"), repos = "http://posit2:4242/cran/__linux__/jammy/latest")'
+RUN /opt/R/4.3.0/bin/Rscript -e 'install.packages(c("reticulate","odbc", "IRkernel"), repos = "http://posit2:4242/cran/__linux__/jammy/latest")'
 
 # Point at Private Package Manager
 #COPY repos.conf /etc/rstudio/repos.conf
@@ -67,18 +67,36 @@ COPY rserver.conf /etc/rstudio/rserver.conf
 RUN rm -rf /usr/local/bin/jupyter
 RUN rm -rf /opt/python/jupyter
 
+# Remove existing Python 3.9.14 and 3.8.15
+RUN rm -rf /opt/python/3.9.14
+RUN rm -rf /opt/python/3.8.15
+RUN rm -rf /opt/python/default
+
+# Install Python versions that match my Connect server
+RUN wget https://cdn.rstudio.com/python/ubuntu-2204/pkgs/python-3.8.17_1_amd64.deb && gdebi -n python-3.8.17_1_amd64.deb
+RUN /opt/python/3.8.17/bin/pip install --upgrade pip
+RUN /opt/python/3.8.17/bin/pip install pyarrow
+RUN /opt/python/3.8.17/bin/pip install fastparquet
+
+
+RUN wget https://cdn.rstudio.com/python/ubuntu-2204/pkgs/python-3.12.0_1_amd64.deb && gdebi -n python-3.12.0_1_amd64.deb
+RUN /opt/python/3.12.0/bin/pip install --upgrade pip
+RUN /opt/python/3.12.0/bin/pip install pyarrow
+RUN /opt/python/3.12.0/bin/pip install fastparquet
+
 # Install Jupyter lab, notebooks etc
-RUN /opt/python/3.8.15/bin/pip install jupyter jupyterlab rsp_jupyter rsconnect_jupyter workbench_jupyterlab
+RUN echo `ls -l /opt/python`
+RUN /opt/python/3.8.17/bin/pip install jupyter jupyterlab rsp_jupyter rsconnect_jupyter workbench_jupyterlab
 
 # Set jupyter on the PATH
-RUN ln -s /opt/python/3.8.15/bin/jupyter /usr/local/bin/jupyter
+RUN ln -s /opt/python/3.8.17/bin/jupyter /usr/local/bin/jupyter
 
 # Install the Jupyter extensions
-RUN /opt/python/3.8.15/bin/jupyter-nbextension install --sys-prefix --py rsp_jupyter
-RUN /opt/python/3.8.15/bin/jupyter-nbextension enable --sys-prefix --py rsp_jupyter
-RUN /opt/python/3.8.15/bin/jupyter-nbextension install --sys-prefix --py rsconnect_jupyter
-RUN /opt/python/3.8.15/bin/jupyter-nbextension enable --sys-prefix --py rsconnect_jupyter
-RUN /opt/python/3.8.15/bin/jupyter-serverextension enable --sys-prefix --py rsconnect_jupyter
+RUN /opt/python/3.8.17/bin/jupyter-nbextension install --sys-prefix --py rsp_jupyter
+RUN /opt/python/3.8.17/bin/jupyter-nbextension enable --sys-prefix --py rsp_jupyter
+RUN /opt/python/3.8.17/bin/jupyter-nbextension install --sys-prefix --py rsconnect_jupyter
+RUN /opt/python/3.8.17/bin/jupyter-nbextension enable --sys-prefix --py rsconnect_jupyter
+RUN /opt/python/3.8.17/bin/jupyter-serverextension enable --sys-prefix --py rsconnect_jupyter
 
 # Overwrite the default jupyter.conf
 RUN rm -rf /etc/rstudio/jupyter.conf
@@ -104,14 +122,14 @@ RUN printf "allow-r-cran-repos-edit=1 \n" >> /etc/rstudio/rsession.conf
 RUN printf "admin-superuser-group=r-users \n" >> /etc/rstudio/rserver.conf
 
 # Install the MS SQL Server V. 17 ODBC Driver
-RUN cd /tmp && curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && curl https://packages.microsoft.com/config/ubuntu/18.04/prod.list > /etc/apt/sources.list.d/mssql-release.list && apt update && ACCEPT_EULA=Y apt install -y msodbcsql17
+RUN cd /tmp && curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && curl https://packages.microsoft.com/config/ubuntu/22.04/prod.list > /etc/apt/sources.list.d/mssql-release.list && apt update && ACCEPT_EULA=Y apt install -y msodbcsql17
 
 # Get rid of buildkitsandbox error (should only be in bionic)
-RUN rm -rf /var/lib/rstudio-launcher/Local/jobs/buildkitsandbox 
+#RUN rm -rf /var/lib/rstudio-launcher/Local/jobs/buildkitsandbox 
 
 # 18. Set additional explicit kernels in Jupyter
-RUN /opt/python/3.9.14/bin/pip install ipykernel
-RUN /opt/python/3.9.14/bin/python -m ipykernel install --name py3.9.14 --display-name "Python 3.9.14"
+RUN /opt/python/3.12.0/bin/pip install ipykernel
+RUN /opt/python/3.12.0/bin/python -m ipykernel install --name py3.12.0 --display-name "Python 3.12.0"
 
 # R
 RUN /opt/R/4.1.3/bin/Rscript -e 'IRkernel::installspec(user = FALSE, name="R4.1.3", displayname="R 4.1.3")'

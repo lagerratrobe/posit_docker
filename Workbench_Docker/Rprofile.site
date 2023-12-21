@@ -2,7 +2,7 @@
 
 local({
   r <- getOption("repos")
-  r["CRAN"] <- "http://posit2:4242/cran/__linux__/bionic/latest"
+  r["CRAN"] <- "http://posit2:4242/cran/__linux__/jammy/latest"
   options(repos = r)
 })
 

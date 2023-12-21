@@ -22,12 +22,12 @@ NoWarning = TRUE
 Provider = password
 
 [RPackageRepository "CRAN"]
-URL = http://posit2:4242/cran/__linux__/bionic/latest
+URL = http://posit2:4242/cran/__linux__/jammy/latest 
 
 [Python]
 Enabled = true
-Executable = /opt/python/3.8.10/bin/python
-Executable = /opt/python/3.9.5/bin/python
+Executable = /opt/python/3.8.17/bin/python
+Executable = /opt/python/3.9.17/bin/python
 Executable = /opt/python/3.12.0/bin/python3
 
 [Quarto]
