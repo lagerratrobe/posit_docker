@@ -1,6 +1,7 @@
 [Unit]
 Description=RStudio Workbench Service
 After=docker.service
+After=postgis-docker.service
 Requires=docker.service
 
 [Service]

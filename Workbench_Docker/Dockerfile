@@ -7,6 +7,9 @@ RUN apt install -y libgdal-dev libgeos-dev libproj-dev libudunits2-dev unixodbc 
 # Copy the offline lic file into the image
 COPY workbench.lic /etc/rstudio/workbench.lic
 
+# Copy /etc/rstudio/database.conf into place
+COPY database.conf /etc/rstudio/database.conf
+
 # Activate the license
 RUN /usr/lib/rstudio-server/bin/license-manager activate-file /etc/rstudio/workbench.lic
 
@@ -109,7 +112,7 @@ RUN printf "rsession-which-r=/opt/R/4.2.3/bin/R \n" >> /etc/rstudio/rserver.conf
 RUN printf "server-project-sharing=1 \n" >> /etc/rstudio/rserver.conf
 
 # Set shared project folder location
-RUN printf "server-project-sharing-root-dir=/home/SharedProjects \n" >> /etc/rstudio/rserver.conf
+#RUN printf "server-project-sharing-root-dir=/home/SharedProjects \n" >> /etc/rstudio/rserver.conf
 
 # Set default project and work dirs
 RUN printf "session-default-working-dir=/data/RProjects \n" >> /etc/rstudio/rsession.conf
