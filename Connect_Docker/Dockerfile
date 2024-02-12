@@ -12,6 +12,7 @@ RUN apt-get install -y libgdal-dev libgeos-dev libproj-dev libudunits2-dev
 # Fix the TinyTeX install
 RUN chmod -R 777 /opt/TinyTeX
 #RUN tlmgr option repository https://texlive.info/tlnet-archive/2023/11/19/tlnet/
+RUN tlmgr update --self
 RUN tlmgr install koma-script
 RUN tlmgr install caption
 RUN tlmgr install tcolorbox
@@ -43,7 +44,7 @@ RUN /opt/python/3.8.17/bin/pip install pyarrow
 RUN /opt/python/3.8.17/bin/pip install fastparquet
 
 # Pro-Driver setup
-RUN cd /tmp && curl -O https://cdn.rstudio.com/drivers/7C152C12/installer/rstudio-drivers_2023.05.0_amd64.deb && sudo gdebi -n rstudio-drivers_2023.05.0_amd64.deb && cp /opt/rstudio-drivers/odbcinst.ini.sample /etc/odbcinst.ini
+RUN cd /tmp && curl -O https://cdn.rstudio.com/drivers/7C152C12/installer/rstudio-drivers_2023.05.0_amd64.deb && gdebi -n rstudio-drivers_2023.05.0_amd64.deb && cp /opt/rstudio-drivers/odbcinst.ini.sample /etc/odbcinst.ini
 
 # Copy our configuration over the default install configuration
 COPY rstudio-connect.gcfg /etc/rstudio-connect/rstudio-connect.gcfg
@@ -58,3 +59,5 @@ RUN /opt/rstudio-connect/bin/license-manager activate-file /etc/rstudio-server/c
 ENV TZ=America/Los_Angeles
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
+# Install latest Quarto
+RUN cd /tmp && curl -LO https://quarto.org/download/latest/quarto-linux-amd64.deb && gdebi -n quarto-linux-amd64.deb
